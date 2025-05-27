@@ -1,38 +1,29 @@
 # Laporan Proyek Machine Learning - Rahmah Sary Fadiyah
 
+![Alt Text](Resource/sampul.jpg)
+
 ## Project Overview
 
-Seiring dengan pesatnya pertumbuhan industri hiburan digital, terutama platform layanan streaming seperti Netflix, Disney+, dan Amazon Prime, pengguna dihadapkan pada pilihan ribuan film dan serial setiap harinya. Tantangan utama yang muncul adalah bagaimana menyajikan konten yang relevan dan sesuai dengan preferensi pengguna tanpa membuat mereka kewalahan dengan terlalu banyak pilihan. Oleh karena itu, sistem rekomendasi menjadi komponen penting dalam meningkatkan pengalaman pengguna dengan menyarankan konten yang kemungkinan besar akan disukai pengguna.
+Seiring dengan pesatnya pertumbuhan industri hiburan digital, terutama platform layanan streaming seperti Netflix, Disney+, dan Amazon Prime, pengguna dihadapkan pada pilihan ribuan film dan serial setiap harinya. Tantangan utama yang muncul adalah bagaimana menyajikan konten yang relevan dan sesuai dengan preferensi pengguna tanpa membuat mereka kewalahan dengan terlalu banyak pilihan. Oleh karena itu, sistem rekomendasi menjadi komponen penting dalam meningkatkan pengalaman pengguna, dengan menyarankan konten yang kemungkinan besar akan disukai pengguna, sekaligus memperkuat peran online review sebagai faktor yang memengaruhi keputusan menonton secara lebih personal dan berbasis data [1].
 
-Masalah utama yang hendak diselesaikan adalah bagaimana mengidentifikasi film yang relevan bagi pengguna secara personal. Tanpa sistem rekomendasi yang efektif, pengguna bisa merasa frustasi dan kehilangan ketertarikan pada layanan yang ditawarkan. Sistem rekomendasi dapat mengatasi permasalahan ini dengan menganalisis preferensi pengguna, riwayat penelusuran, serta kesamaan antar konten atau antar pengguna lainnya [1].
+Masalah utama yang hendak diselesaikan adalah bagaimana mengidentifikasi film yang relevan bagi pengguna secara personal. Tanpa sistem rekomendasi yang efektif, pengguna bisa merasa frustasi dan kehilangan ketertarikan pada layanan yang ditawarkan. Sistem rekomendasi dapat mengatasi permasalahan ini dengan menganalisis preferensi pengguna serta kesamaan antar konten atau antar pengguna lainnya [2].
 
 ## Business Understanding
 ### Problem Statements
 
-Pernyataan masalah:
-- Bagaimana cara membantu pengguna menemukan film yang sesuai dengan selera dan preferensi mereka di tengah banyaknya pilihan film yang tersedia?
-- Bagaimana cara meningkatkan kepuasan dan keterlibatan pengguna melalui sistem rekomendasi yang lebih tepat sasaran?
+- Bagaimana cara merekomendasikan film yang memiliki kemiripan konten seperti genre dengan film yang disukai pengguna?
+- Bagaimana cara menyajikan rekomendasi film secara relevan untuk pengguna baru (cold-start user) yang belum memiliki riwayat interaksi?
 
 ### Goals
-
-Menjelaskan tujuan proyek yang menjawab pernyataan masalah:
-- Membangun sistem rekomendasi film yang mampu memahami dan memetakan preferensi pengguna secara akurat agar pengguna dapat menemukan film yang sesuai dengan selera mereka dengan cepat dan mudah di antara banyaknya pilihan film.
-- Meningkatkan kepuasan dan keterlibatan pengguna pada platform dengan memberikan rekomendasi film yang lebih relevan dan personal, sehingga pengguna merasa lebih dihargai dan terdorong untuk terus menggunakan layanan.
-Semua poin di atas harus diuraikan dengan jelas. Anda bebas menuliskan berapa pernyataan masalah dan juga goals yang diinginkan.
-
+- Merekomendasikan film yang memiliki kemiripan genre dengan film yang disukai pengguna dan mempermudah pengguna dalam menemukan film baru yang sesuai dengan selera mereka, tanpa harus bergantung pada preferensi pengguna lain.
+- Mengatasi masalah cold-start untuk pengguna baru dengan memberikan rekomendasi berdasarkan metadata dari film yang pernah ditonton atau dicari, bukan dari interaksi historis.
 
     ### Solution statements
     - Content-Based Filtering (CBF)
       Pendekatan ini memanfaatkan data atribut film seperti genre, keywords, overview, cast, dan director untuk membuat profil film dan profil preferensi pengguna. Sistem akan merekomendasikan film yang memiliki kemiripan konten dengan film-film yang pernah disukai atau ditonton oleh pengguna. Dengan demikian, pengguna dapat menemukan film yang sesuai selera secara cepat dan tepat.
+    - Evaluasi
+      Sistem rekomendasi ini akan dievaluasi menggunakan metrik precision untuk mengukur seberapa relevan film-film yang direkomendasikan terhadap preferensi pengguna. Nilai precision yang tinggi menunjukkan bahwa sebagian besar rekomendasi yang diberikan memang sesuai dan disukai oleh pengguna
 
-    - Collaborative Filtering (CF)
-      Metode ini menggunakan data interaksi pengguna (misalnya rating atau voting) untuk menemukan pola kesamaan preferensi antar pengguna. Rekomendasi diberikan berdasarkan film yang disukai oleh pengguna lain dengan preferensi serupa. Pendekatan ini meningkatkan relevansi rekomendasi dan memperkaya variasi film yang diberikan, sehingga dapat meningkatkan kepuasan dan keterlibatan pengguna.
-
-    - Hybrid Recommendation System
-      Kombinasi antara Content-Based Filtering dan Collaborative Filtering, yang bertujuan memanfaatkan keunggulan keduanya. Sistem hybrid dapat mengatasi keterbatasan masing-masing metode, seperti cold-start problem dan overspecialization, sehingga memberikan rekomendasi yang lebih personal, relevan, dan beragam bagi pengguna.
-
-    - Incorporating Popularity and Trend Factors
-      Menambahkan bobot popularitas (vote_count, popularity) dan tren rilis terbaru (release_date) dalam algoritma rekomendasi agar film yang direkomendasikan tidak hanya sesuai selera tetapi juga sedang digemari banyak pengguna, sehingga meningkatkan keterlibatan dan kepuasan pengguna.
 
 ## Data Understanding
 Dataset yang digunakan dalam proyek ini berisi informasi tentang film-film yang tersedia pada sebuah platform streaming. Dataset terdiri dari **4.803 entri film** dengan berbagai atribut yang menggambarkan karakteristik film tersebut. Data ini mencakup informasi seperti genre, judul asli, bahasa, durasi, tanggal rilis, dan rating film. Dataset ini berasal dari [The Movie Database](https://www.kaggle.com/datasets/abdallahwagih/movies) dataset yang dapat diunduh secara gratis dari Kaggle.
@@ -158,210 +149,162 @@ Penjelasaanya:
 
 ## Data Preparation
 
-- **Menghapus atribut yang tidak digunakan**
-  Field `id`, `index`, dan `homepage` kemungkinan besar **dihapus atau tidak digunakan dalam proyek sistem rekomendasi film berbasis machine learning** karena alasan berikut:
-   - **`id` dan `index`** Biasanya hanya digunakan untuk identifikasi internal dalam dataset (misalnya sebagai primary key). Tidak mengandung informasi bermakna untuk pemodelan atau analisis.
-   - **`homepage`** Merupakan link ke situs resmi film (misalnya situs promosi). Tidak memberikan nilai prediktif untuk sistem rekomendasi. Sering kali data ini kosong atau tidak konsisten, sehingga tidak layak diproses lebih lanjut.
+- **Membuat sebuah DataFrame baru** bernama movie_new yang hanya berisi tiga kolom penting (id, movie_name, dan genre) dari DataFrame asli df. Tujuannya adalah untuk menyederhanakan data agar bisa digunakan lebih mudah untuk keperluan seperti sistem rekomendasi berbasis konten (Content-Based Filtering / CBF).
 
-- **Menghapus missing value**
-  Menghapus missing value penting dilakukan untuk menjaga kualitas data dan mencegah error saat proses analisis atau pelatihan model machine learning. dan setelah dihapus datanya terdapat **3757 baris** dan **21 kolom**
+- **Menghapus missing value** jumlah data dan kolom setelah dihapus adalah 4775 baris dan 3 kolom
 
 ## Modeling
 
 1. **Content-Based Filtering (CBF)**
-   Content-Based Filtering merupakan pendekatan sistem rekomendasi yang merekomendasikan item (dalam hal ini film) kepada pengguna berdasarkan kemiripan konten (genre, deskripsi, dan informasi metadata lainnya) dengan film yang pernah disukai atau ditonton oleh pengguna tersebut. Berikut adalah penjelasan **per bagian kode** dari implementasi sistem **Content-Based Filtering (CBF)** menggunakan **TF-IDF** dan **cosine similarity**:
-   - **Membangun TF-IDF Matrix**
-
-        ```python
-        tfidf = TfidfVectorizer(stop_words='english')
-        tfidf_matrix = tfidf.fit_transform(df['genres'])
-        ```
-    * `TfidfVectorizer(stop_words='english')`:
-      * Digunakan untuk mengubah data teks (dalam hal ini kolom `genres`) menjadi representasi numerik berbasis **TF-IDF (Term Frequency-Inverse Document Frequency)**.
-       * `stop_words='english'` akan mengabaikan kata-kata umum dalam bahasa Inggris (seperti *the*, *and*, *is*, dll.) agar tidak memengaruhi hasil.
-    * `tfidf.fit_transform(df['genres'])`:
-      * Membangun vektor TF-IDF untuk setiap film berdasarkan nilai genre-nya.
-      * Hasil akhirnya adalah **matriks berdimensi (jumlah film x jumlah kata unik di semua genre)**.
+   Content-Based Filtering merupakan pendekatan sistem rekomendasi yang merekomendasikan item (dalam hal ini film) kepada pengguna berdasarkan kemiripan konten (genre, deskripsi, dan informasi metadata lainnya) dengan film yang pernah disukai atau ditonton oleh pengguna tersebut. Berikut adalah penjelasan **per bagian kode** dari implementasi sistem **Content-Based Filtering (CBF)**:
+    - **Inisialisasi TfidfVectorizer**
+      - `tf = TfidfVectorizer()` Membuat objek TfidfVectorizer dari Scikit-learn.
+      - `tf.fit(movie_new['genre'])` Proses fit dilakukan ke kolom 'genre' dari DataFrame movie_new.
+      -  `tf.get_feature_names_out()` Mengambil daftar semua fitur unik (genre terms) yang ditemukan oleh TfidfVectorizer
         
-   - **Menghitung Cosine Similarity**
-
-        ```python
-        cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-        ```
-
-    * `linear_kernel()` digunakan untuk menghitung **cosine similarity** antar semua pasangan film berdasarkan TF-IDF matrix.
-    * Output-nya adalah matriks kesamaan (similarity matrix) berukuran `(n_film x n_film)` di mana setiap nilai `[i][j]` menunjukkan seberapa mirip film ke-i dan film ke-j berdasarkan genre.
-
-    - **Fungsi Rekomendasi Content-Based**
-        ```python
-        def content_based_recommendations(title, df_movies, cosine_sim, top_n=5):
-        ```
-
-    * Fungsi ini menerima:
-
-        * `title`: Judul film yang dijadikan referensi.
-        * `df_movies`: DataFrame berisi data film.
-        * `cosine_sim`: Matriks kesamaan antar film.
-        * `top_n`: Jumlah film teratas yang akan direkomendasikan.
-
-    - **Mengambil Indeks Film Referensi**
-        ```python
-        indices = pd.Series(df_movies.index, index=df_movies['title'])
-        idx = indices[title]
-        ```
-
-        * Membuat `Series` yang memetakan judul film ke indeks-nya dalam DataFrame.
-        * `idx` adalah indeks dari film yang menjadi input (judul yang ingin dicari rekomendasinya).
-
-    - **Mengambil dan Mengurutkan Skor Similarity**
-
-        ```python
-        sim_scores = list(enumerate(cosine_sim[idx]))
-        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-        sim_scores = sim_scores[1:top_n+1]
-        ```
-        * `enumerate(cosine_sim[idx])`: Mengambil semua nilai kesamaan film referensi dengan film lain.
-        * `sorted(..., reverse=True)`: Mengurutkan berdasarkan skor similarity tertinggi.
-        * `sim_scores[1:top_n+1]`: Mengambil `top_n` film teratas, dengan menghindari film itu sendiri (karena skor similarity-nya pasti 1 dengan dirinya sendiri).
-
-    - **Mengambil Judul Film Hasil Rekomendasi**
-
-        ```python
-        movie_indices = [i[0] for i in sim_scores]
-        return df_movies.iloc[movie_indices]['title'].tolist()
-        ```
-
-        * Mengambil indeks dari film yang paling mirip.
-        * Mengambil judul-judul film berdasarkan indeks tersebut dan mengembalikannya dalam bentuk list.
-
-    - **INFERENCE**
-      Dengan memanfaatkan vektor TF-IDF dari genre dan menghitung cosine similarity antar film, fungsi ini menampilkan lima film teratas yang paling mirip dengan "Avatar" beserta skor kemiripannya. Pendekatan ini memungkinkan sistem merekomendasikan film lain yang memiliki genre atau elemen cerita serupa, meskipun belum pernah ditonton sebelumnya oleh pengguna, sehingga memberikan rekomendasi yang relevan secara tematik dan akan menampilkam top 5.
-
-    Berikut adalah tabel hasil rekomendasinya:
-
-    | No | Judul Film                 | Similarity |
-    | -- | -------------------------- | ---------- |
-    | 1  | Man of Steel               | 1.0000     |
-    | 2  | X-Men: Days of Future Past | 1.0000     |
-    | 3  | Jupiter Ascending          | 1.0000     |
-    | 4  | The Wolverine              | 1.0000     |
-    | 5  | Superman                   | 1.0000     |
-
-    Hasil rekomendasi di atas menunjukkan bahwa kelima film yang direkomendasikan memiliki nilai *similarity* sebesar **1.0000** terhadap film *Avatar*, berdasarkan pendekatan **Content-Based Filtering (CBF)** dengan fitur `genres`. Artinya, kelima film tersebut memiliki genre yang sangat mirip atau bahkan identik dengan *Avatar*, seperti **Action**, **Adventure**, **Fantasy**, atau **Science Fiction**.
-
-    Nilai *similarity* maksimum (1.0) menunjukkan bahwa vektor TF-IDF dari film-film ini berada pada arah yang sama dalam ruang vektor, menandakan kesamaan konten genre secara penuh. Ini juga bisa terjadi karena genre ditulis identik dalam bentuk string, sehingga hasil *TF-IDF* dan cosine similarity menjadi maksimal.
-
-   - **Kelebihan & Kekurangan**
-     Berikut kelebihan dan kekurangan Content-Based Filtering (CBF) :
-     - Kelebihan Content-Based Filtering (CBF)
-
-        * **Tidak butuh interaksi pengguna lain**
-  CBF hanya bergantung pada informasi konten item yang tersedia, sehingga cocok untuk sistem baru atau pengguna baru (cold-start user).
-
-        * **Personal dan transparan**
-  Rekomendasi dihasilkan berdasarkan preferensi pengguna yang jelas, seperti genre atau atribut lain yang sering dipilih oleh pengguna.
-
-        * **Mudah diinterpretasi**
-  Sistem mudah dijelaskan kenapa merekomendasikan film tertentu karena dasar rekomendasinya jelas, yaitu kesamaan konten.
-
-    - Kekurangan Content-Based Filtering (CBF)
-
-        * **Tidak bisa merekomendasikan genre baru**
-  Sistem cenderung memberikan rekomendasi dalam pola preferensi yang sama (over-specialization) dan sulit keluar dari zona tersebut.
-
-        * **Butuh representasi konten yang lengkap dan bagus**
-  Jika data genre atau deskripsi film kurang lengkap atau tidak akurat, maka performa sistem akan menurun.
-
-        * **Tidak mempertimbangkan rating atau interaksi pengguna lain**
-  Sistem kurang efektif dalam menangkap tren umum atau popularitas film di komunitas pengguna secara keseluruhan.
-
-
-
-3. **Collaborative Filtering (CF)**
-   Fungsi dan kode di atas merupakan implementasi sistem **Collaborative Filtering (CF)** menggunakan pendekatan **Matrix Factorization** dengan algoritma **Singular Value Decomposition (SVD)** dari library `Surprise`. Berikut penjelasan dari setiap bagian kode:
-   - **Dataset Interaksi Pengguna**
-
-    ```python    
-        ratings_dict = {
-    "user_id": [1, 1, 1, 2, 2, 3, 3],
-    "movie_id": [10, 20, 30, 10, 30, 20, 40],
-    "rating": [4, 5, 2, 5, 3, 4, 1]
-    }
-    ```
-    Data ini berisi **penilaian (rating)** pengguna terhadap berbagai film. Misalnya, pengguna `user_id=1` memberi rating 4 untuk `movie_id=10`, rating 5 untuk `movie_id=20`, dan seterusnya.
-
-    - **Training Model SVD**
-
-        ```python
-            algo = SVD()
-            algo.fit(trainset)
-        ```
-    Model dilatih menggunakan **SVD**, yang memfaktorkan matriks pengguna-film menjadi representasi laten dari pengguna dan film. Ini memungkinkan prediksi rating untuk film yang belum dilihat oleh pengguna.
-
-    - **Fungsi Rekomendasi**
-
-        ```python
-        def collaborative_recommendations(user_id, df_movies, algo, top_n=5):
-        ```
-
-        Fungsi ini akan merekomendasikan **Top-N film** untuk `user_id` tertentu dengan langkah:
-        1. Mengambil semua `movie_id` dari dataframe film.
-        2. Melakukan **prediksi rating** untuk setiap film menggunakan model SVD.
-        3. Mengurutkan film berdasarkan prediksi tertinggi.
-        4. Mengambil `top_n` film teratas dan mengembalikan judulnya.
-
-    - **Contoh Inference (Jika user\_id=1):**
-      Fungsi `collaborative_inference` digunakan untuk menghasilkan rekomendasi film bagi pengguna tertentu berdasarkan pendekatan **Collaborative Filtering** menggunakan algoritma SVD. Fungsi ini memprediksi rating yang mungkin diberikan oleh pengguna terhadap semua film yang tersedia, lalu mengurutkannya berdasarkan skor prediksi tertinggi. Dalam contoh penggunaan untuk `user_id=1`, sistem memberikan lima rekomendasi film dengan prediksi rating tertinggi, seperti terlihat dalam output yang mencantumkan judul film dan nilai prediksi ratingnya. Pendekatan ini memungkinkan sistem untuk merekomendasikan film yang kemungkinan besar disukai pengguna berdasarkan pola penilaian pengguna lain yang serupa, tanpa mempertimbangkan konten film seperti genre atau sinopsis.
-      Berikut adalah hasil rekomendasi film untuk **User 1** menggunakan pendekatan **Collaborative Filtering** berbasis algoritma SVD. Sistem memperkirakan seberapa besar kemungkinan pengguna akan menyukai film-film tertentu berdasarkan preferensi pengguna lain dengan pola penilaian serupa. Semua film dalam daftar memiliki **prediksi rating yang sama sebesar 3.61**, yang menunjukkan bahwa menurut model, film-film ini memiliki tingkat ketertarikan yang setara bagi User 1. Ini bisa terjadi karena data interaksi pengguna masih terbatas, sehingga model belum cukup terkalibrasi untuk membedakan preferensi secara signifikan.
-
-Berikut tabel hasil rekomendasinya:
-
-| No. | Judul Film                               | Predicted Rating |
-| --- | ---------------------------------------- | ---------------- |
-| 1   | Avatar                                   | 3.61             |
-| 2   | Pirates of the Caribbean: At World's End | 3.61             |
-| 3   | Spectre                                  | 3.61             |
-| 4   | The Dark Knight Rises                    | 3.61             |
-| 5   | John Carter                              | 3.61             |
-
-Pendekatan Collaborative Filtering seperti ini sangat berguna karena bisa menemukan keterkaitan film yang tidak terduga tanpa melihat kontennya, namun model sangat bergantung pada kualitas dan jumlah interaksi data pengguna.
-
-**Kelebihan & Kekurangan**
-Berikut kelebihan dan kekurangan Collaborative Filtering (CF):
-
- - Kelebihan Collaborative Filtering (CF)
-
-    * **Dapat menangkap preferensi laten pengguna**
-       CF bisa menemukan pola tersembunyi dari interaksi pengguna yang tidak terlihat langsung dari fitur film.
-
-    * **Tidak tergantung fitur film seperti genre**
-      Rekomendasi berdasarkan pola interaksi pengguna tanpa perlu informasi konten detail film.
-
-    * **Bisa merekomendasikan film yang sangat berbeda tapi disukai pengguna serupa**
-      Sistem mampu memberikan rekomendasi dari film-film yang beragam, selama pengguna lain dengan preferensi serupa menyukainya.
-
-- Kekurangan Collaborative Filtering (CF)
-
-    * **Butuh cukup data interaksi pengguna**
-      CF membutuhkan data rating atau interaksi dalam jumlah besar agar bisa bekerja efektif.
-
-    * **Tidak bisa memberi rekomendasi pada pengguna baru (cold start)**
-      Pengguna yang baru tidak memiliki data interaksi, sehingga sulit sistem memberikan rekomendasi tepat.
-
-    * **Tidak menjelaskan alasan rekomendasi (black-box)**
-      Rekomendasi sering kali sulit dijelaskan secara transparan karena berdasarkan pola statistik bukan konten langsung.
+    - **tfidf_matrix**
+      - `tf.fit_transform(movie_new['genre'])` Menerapkan fit() untuk mempelajari semua kata unik dalam genre. Kemudian langsung transform() untuk mengubah tiap genre film menjadi vektor numerik berdimensi jumlah kata unik (dalam semua genre).
+      - `tfidf_matrix.shape` Mengembalikan tuple (baris, kolom)
+        
+    - **`tfidf_matrix.todense()`** akan mengubah matriks TF-IDF yang awalnya berbentuk sparse (jarang) menjadi bentuk dense (penuh), yaitu array 2D berisi nilai bobot TF-IDF untuk setiap genre di setiap film. Hasilnya bisa sangat besar tergantung jumlah film dan jumlah fitur unik.
+      
+    - **melihat sebagian kecil dari matriks TF-IDF**
+        - `tfidf_matrix.todense()` Mengubah matriks TF-IDF yang berupa sparse matrix menjadi matriks dense (biasa) agar mudah diolah dalam bentuk DataFrame. Ini membuat seluruh data TF-IDF menjadi array 2 dimensi.
+         - `columns=tf.get_feature_names_out()` Memberikan nama kolom DataFrame sesuai fitur-fitur yang ditemukan oleh `TfidfVectorizer`. Fitur-fitur ini adalah kata-kata unik dari kolom `genre` setelah diproses TF-IDF.
+         - `index=movie_new.movie_name` Menjadikan nama film (`movie_name`) sebagai label baris (index) pada DataFrame sehingga setiap baris merepresentasikan sebuah film.
+         - `.sample(22, axis=1)` Mengambil sampel 22 kolom (fitur genre) secara acak dari keseluruhan fitur TF-IDF. `axis=1` berarti sampling pada kolom.
+         - `.sample(10, axis=0)` Mengambil sampel 10 baris (film) secara acak dari keseluruhan film yang ada. `axis=0` berarti sampling pada baris
+    - **cosine_sim**
+      -  Fungsi `cosine_similarity()` menghitung kemiripan antar baris dalam matriks `tfidf_matrix` berdasarkan sudut kosinusnya
+      -  Karena `tfidf_matrix` adalah representasi TF-IDF untuk genre tiap film, hasil `cosine_sim` adalah matriks persegi (square matrix) yang menunjukkan tingkat kemiripan genre antar setiap pasangan film.
+      -  Setiap nilai dalam `cosine_sim` berada di rentang 0 sampai 1, di mana 1 berarti genre dua film sangat mirip (identik), dan 0 berarti tidak ada kesamaan sama sekali.
+   - **membuat DataFrame matriks kemiripan film**
+     - `cosine_sim_df = pd.DataFrame(cosine_sim, index=movie_new['movie_name'], columns=movie_new['movie_name'])` Membuat DataFrame pandas dari matriks cosine_sim. Baris dan kolom diberi label menggunakan nama film (movie_new['movie_name']) agar lebih mudah dibaca dan diakses berdasarkan judul film.
+     - `print('Shape:', cosine_sim_df.shape)` Mencetak bentuk (jumlah baris dan kolom) dari DataFrame cosine_sim_df.Karena matriks kemiripan persegi, bentuknya adalah (jumlah film, jumlah film).
+     - `cosine_sim_df.sample(5, axis=1).sample(10, axis=0)` Mengambil sampel acak 5 kolom (film) dari DataFrame, lalu dari hasil tersebut mengambil sampel acak 10 baris (film). Ini berguna untuk melihat sebagian kecil matriks kemiripan film tanpa harus menampilkan semuanya, agar lebih ringkas dan mudah dianalisis.
+       
+    - Berikut penjelasan tiap bagian fungsi `movie_recommendations`:
+      - Fungsi menerima `nama_movie` sebagai film referensi, `similarity_data` berupa DataFrame kemiripan, `items` data film (judul & genre), dan `k` jumlah rekomendasi.
+      - `similarity_data.loc[:, nama_movie].to_numpy()` mengambil kolom kemiripan film terhadap `nama_movie` dan mengubahnya jadi array NumPy.
+      - `.argpartition(range(-1, -k, -1))` mencari indeks `k` film dengan nilai kemiripan tertinggi secara efisien.
+      - `closest` berisi nama film-film dengan kemiripan tertinggi tersebut.
+      - Film yang sama dengan `nama_movie` dihapus agar tidak merekomendasikan film itu sendiri.
+      - Hasil dikembalikan sebagai DataFrame berisi judul dan genre dari film-film rekomendasi
 
 
 ## Evaluation
-Pada bagian ini Anda perlu menyebutkan metrik evaluasi yang digunakan. Kemudian, jelaskan hasil proyek berdasarkan metrik evaluasi tersebut.
 
-Ingatlah, metrik evaluasi yang digunakan harus sesuai dengan konteks data, problem statement, dan solusi yang diinginkan.
+Dalam proyek sistem rekomendasi ini, digunakan Precision\@K mengukur seberapa tepat rekomendasi yang diberikan dalam daftar Top-K dibandingkan dengan item yang memang relevan bagi pengguna.
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan formula metrik dan bagaimana metrik tersebut bekerja.
+   Formula Precision\@K:
+
+   ![Alt Text](Resource/precision.PNG)
+
+   Precision\@K membantu menilai kualitas rekomendasi yang bersifat personal dan berbasis konten, dimana fokusnya adalah meminimalkan rekomendasi yang tidak relevan bagi pengguna.
+   - Penjelasan code evaluasi:
+     Berikut adalah **penjelasan baris per baris** dari kode yang kamu tulis untuk menghitung *Precision\@5* pada sistem **Content-Based Filtering (CBF)**
+
+1. **Mengambil genre film input**
+
+   ```python
+   genre_input = items[items['movie_name'] == movie_input]['genre'].values[0]
+   ```
+
+   Ambil genre film yang menjadi acuan (misalnya "Avatar") dari dataframe `items`.
+
+2. **Mengambil genre dari film-film hasil rekomendasi**
+
+   ```python
+   rekom_genres = rekomendasi_df['genre'].tolist()
+   ```
+
+   Buat daftar genre dari setiap film yang direkomendasikan.
+
+3. **Menghitung berapa banyak rekomendasi yang relevan**
+
+   ```python
+   relevan = sum([genre_input == g for g in rekom_genres])
+   ```
+
+   Hitung jumlah film rekomendasi yang genre-nya sama persis dengan genre film input.
+
+4. **Menghitung total rekomendasi**
+
+   ```python
+   total_rekom = len(rekom_genres)
+   ```
+
+   Hitung jumlah total film yang direkomendasikan.
+
+5. **Menghitung presisi**
+
+   ```python
+   presisi = relevan / total_rekom if total_rekom > 0 else 0
+   ```
+
+   Presisi adalah rasio jumlah rekomendasi yang relevan terhadap total rekomendasi, atau nol jika tidak ada rekomendasi.
+
+6. **Mengembalikan nilai presisi**
+
+   ```python
+   return presisi
+   ```
+
+   Kembalikan nilai presisi yang sudah dihitung.
+
+---
+
+**Contoh Pemakaian**
+
+1. **Cek apakah film "Avatar" ada di data similarity matrix**
+
+   ```python
+   if 'Avatar' in cosine_sim_df.index:
+   ```
+
+2. **Mengambil 5 rekomendasi film untuk "Avatar"**
+
+   ```python
+   rekom = movie_recommendations('Avatar', similarity_data=cosine_sim_df, items=movie_new[['movie_name', 'genre']], k=5)
+   ```
+
+3. **Menghitung presisi rekomendasi tersebut**
+
+   ```python
+   presisi = hitung_presisi(rekom, 'Avatar')
+   ```
+
+4. **Menampilkan daftar rekomendasi dan nilai presisinya**
+
+   ```python
+   print("Rekomendasi Avatar dengan genre Action Adventure Fantasy Science Fiction:")
+   print(rekom)
+   print(f"Presisi: {presisi:.2f}")
+   ```
+
+5. **Jika film "Avatar" tidak ditemukan, tampilkan pesan error**
+
+   ```python
+   else:
+       print("Movie 'Avatar' tidak ditemukan di data.")
+   ```
+Hasil rekomendasi untuk film "Avatar" menunjukkan lima film yang direkomendasikan dengan genre yang sangat mirip, yakni kombinasi genre Action, Adventure, Fantasy, dan Science Fiction. Dari lima film tersebut, hanya dua film yang memiliki genre yang persis sama dengan genre film "Avatar," sehingga menghasilkan nilai presisi sebesar 0.40 atau 40%. Ini berarti 40% dari rekomendasi yang diberikan benar-benar relevan berdasarkan kesamaan genre secara tepat, sedangkan sisanya memiliki perbedaan urutan atau kombinasi genre meskipun masih serupa, sehingga sistem rekomendasi berbasis content-based filtering ini sudah cukup efektif namun masih bisa ditingkatkan untuk menghasilkan rekomendasi yang lebih akurat dan relevan.
+
+### Kesimpulan:
+
+1. **Bagaimana cara merekomendasikan film yang memiliki kemiripan konten seperti genre dengan film yang disukai pengguna?**
+   Model Content-Based Filtering merekomendasikan film dengan cara menganalisis fitur konten film seperti genre , kemudian menghitung kemiripan antar film menggunakan metrik seperti cosine similarity pada representasi fitur tersebut (misalnya TF-IDF dari genre). Film-film yang memiliki skor kemiripan tinggi dengan film yang disukai pengguna akan direkomendasikan, sehingga rekomendasi didasarkan pada kesamaan karakteristik konten antara film input dan film lain di database.
+
+2. **Bagaimana cara menyajikan rekomendasi film secara relevan untuk pengguna baru (cold-start user) yang belum memiliki riwayat interaksi?**
+   Untuk pengguna baru yang belum memiliki riwayat rating atau interaksi, model CBF tetap dapat memberikan rekomendasi dengan memanfaatkan fitur konten film yang diketahui, seperti genre favorit atau film awal yang dipilih pengguna. Dengan hanya memasukkan film yang disukai pengguna baru, sistem akan mencari film lain yang memiliki konten serupa. Evaluasi model dengan metrik presisi, misalnya, menunjukkan seberapa tepat rekomendasi tersebut sesuai genre film input, sehingga meskipun tanpa data pengguna historis, rekomendasi masih bisa relevan berdasarkan kemiripan konten.
+
+Evaluasi presisi pada contoh film "Avatar" yang mencapai 0.40 menunjukkan bahwa 40% rekomendasi film benar-benar memiliki genre yang sama persis dengan film input, menandakan model CBF cukup efektif dalam merekomendasikan film berdasarkan kemiripan konten genre, meskipun ada ruang untuk peningkatan agar relevansi rekomendasi lebih tinggi.
+
+---
+## REFRENSI
+
+[1] [Afriani, A. L., Suprayitno, D., & Misbah, N. A. (2023). Pengaruh Media Online Reviews terhadap Keputusan Menonton Film. Jurnal Penelitian Sosial Ilmu Komunikasi, 7(1), 1-10.](https://journal.unpak.ac.id/index.php/apik/article/view/7573)
+
+[2] [Arfisko, H. H., & Wibowo, A. T. (2022). Sistem Rekomendasi Film Menggunakan Metode Hybrid Collaborative Filtering Dan Content-Based Filtering. eProceedings of Engineering, 9(3).](https://openlibrarypublications.telkomuniversity.ac.id/index.php/engineering/article/view/18066)
 
 **---Ini adalah bagian akhir laporan---**
-
-_Catatan:_
-- _Anda dapat menambahkan gambar, kode, atau tabel ke dalam laporan jika diperlukan. Temukan caranya pada contoh dokumen markdown di situs editor [Dillinger](https://dillinger.io/), [Github Guides: Mastering markdown](https://guides.github.com/features/mastering-markdown/), atau sumber lain di internet. Semangat!_
-- Jika terdapat penjelasan yang harus menyertakan code snippet, tuliskan dengan sewajarnya. Tidak perlu menuliskan keseluruhan kode project, cukup bagian yang ingin dijelaskan saja.
