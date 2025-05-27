@@ -28,11 +28,6 @@ Semua poin di atas harus diuraikan dengan jelas. Anda bebas menuliskan berapa pe
     - Collaborative Filtering (CF)
       Metode ini menggunakan data interaksi pengguna (misalnya rating atau voting) untuk menemukan pola kesamaan preferensi antar pengguna. Rekomendasi diberikan berdasarkan film yang disukai oleh pengguna lain dengan preferensi serupa. Pendekatan ini meningkatkan relevansi rekomendasi dan memperkaya variasi film yang diberikan, sehingga dapat meningkatkan kepuasan dan keterlibatan pengguna.
 
-    - Hybrid Recommendation System
-      Kombinasi antara Content-Based Filtering dan Collaborative Filtering, yang bertujuan memanfaatkan keunggulan keduanya. Sistem hybrid dapat mengatasi keterbatasan masing-masing metode, seperti cold-start problem dan overspecialization, sehingga memberikan rekomendasi yang lebih personal, relevan, dan beragam bagi pengguna.
-
-    - Incorporating Popularity and Trend Factors
-      Menambahkan bobot popularitas (vote_count, popularity) dan tren rilis terbaru (release_date) dalam algoritma rekomendasi agar film yang direkomendasikan tidak hanya sesuai selera tetapi juga sedang digemari banyak pengguna, sehingga meningkatkan keterlibatan dan kepuasan pengguna.
 
 ## Data Understanding
 Dataset yang digunakan dalam proyek ini berisi informasi tentang film-film yang tersedia pada sebuah platform streaming. Dataset terdiri dari **4.803 entri film** dengan berbagai atribut yang menggambarkan karakteristik film tersebut. Data ini mencakup informasi seperti genre, judul asli, bahasa, durasi, tanggal rilis, dan rating film. Dataset ini berasal dari [The Movie Database](https://www.kaggle.com/datasets/abdallahwagih/movies) dataset yang dapat diunduh secara gratis dari Kaggle.
@@ -275,18 +270,16 @@ Penjelasaanya:
         * **Tidak mempertimbangkan rating atau interaksi pengguna lain**
   Sistem kurang efektif dalam menangkap tren umum atau popularitas film di komunitas pengguna secara keseluruhan.
 
-
-
 3. **Collaborative Filtering (CF)**
-   Fungsi dan kode di atas merupakan implementasi sistem **Collaborative Filtering (CF)** menggunakan pendekatan **Matrix Factorization** dengan algoritma **Singular Value Decomposition (SVD)** dari library `Surprise`. Berikut penjelasan dari setiap bagian kode:
+   Implementasi sistem **Collaborative Filtering (CF)** menggunakan pendekatan **Matrix Factorization** dengan algoritma **Singular Value Decomposition (SVD)** dari library `Surprise`. Berikut penjelasan dari setiap bagian kode:
    - **Dataset Interaksi Pengguna**
 
     ```python    
         ratings_dict = {
-    "user_id": [1, 1, 1, 2, 2, 3, 3],
-    "movie_id": [10, 20, 30, 10, 30, 20, 40],
-    "rating": [4, 5, 2, 5, 3, 4, 1]
-    }
+        "user_id": [1, 1, 1, 2, 2, 3, 3],
+        "movie_id": [10, 20, 30, 10, 30, 20, 40],
+        "rating": [4, 5, 2, 5, 3, 4, 1]
+        }
     ```
     Data ini berisi **penilaian (rating)** pengguna terhadap berbagai film. Misalnya, pengguna `user_id=1` memberi rating 4 untuk `movie_id=10`, rating 5 untuk `movie_id=20`, dan seterusnya.
 
@@ -353,13 +346,57 @@ Berikut kelebihan dan kekurangan Collaborative Filtering (CF):
 
 
 ## Evaluation
-Pada bagian ini Anda perlu menyebutkan metrik evaluasi yang digunakan. Kemudian, jelaskan hasil proyek berdasarkan metrik evaluasi tersebut.
+Berikut contoh penulisan bagian **Evaluation** lengkap dengan penjelasan metrik, formula singkat, serta hasil evaluasi kedua model (Content-Based Filtering dan Collaborative Filtering) sesuai konteks proyek Anda:
 
-Ingatlah, metrik evaluasi yang digunakan harus sesuai dengan konteks data, problem statement, dan solusi yang diinginkan.
+---
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan formula metrik dan bagaimana metrik tersebut bekerja.
+## Evaluation
 
+Dalam proyek sistem rekomendasi ini, digunakan dua metrik evaluasi yang sesuai dengan pendekatan masing-masing:
+
+1. **Precision\@K untuk Content-Based Filtering (CBF)**
+   Precision\@K mengukur seberapa tepat rekomendasi yang diberikan dalam daftar Top-K dibandingkan dengan item yang memang relevan bagi pengguna.
+
+   Formula Precision\@K:
+
+   $$
+   \text{Precision@K} = \frac{\text{Jumlah item relevan dalam Top-K rekomendasi}}{K}
+   $$
+
+   Precision\@K membantu menilai kualitas rekomendasi yang bersifat personal dan berbasis konten, dimana fokusnya adalah meminimalkan rekomendasi yang tidak relevan bagi pengguna.
+
+2. **Root Mean Square Error (RMSE) untuk Collaborative Filtering (CF)**
+   RMSE mengukur selisih rata-rata kuadrat antara rating yang diprediksi model dengan rating asli pengguna. Nilai RMSE yang lebih kecil menandakan prediksi yang lebih akurat.
+
+   Formula RMSE:
+
+   $$
+   RMSE = \sqrt{\frac{1}{N} \sum_{i=1}^N (r_i - \hat{r_i})^2}
+   $$
+
+   dimana $r_i$ adalah rating asli dan $\hat{r_i}$ adalah rating prediksi.
+
+   RMSE digunakan untuk mengevaluasi performa model matrix factorization pada Collaborative Filtering yang memprediksi rating numerik.
+
+---
+
+### Hasil Evaluasi:
+
+* **Content-Based Filtering (CBF)**
+  Dengan menggunakan Precision\@5, sistem memberikan nilai Precision sebesar **0.40**, yang berarti dari 5 rekomendasi teratas, rata-rata 2 rekomendasi sesuai dengan preferensi pengguna berdasarkan rating tinggi yang pernah diberikan sebelumnya.
+
+* **Collaborative Filtering (CF)**
+  Model SVD yang dilatih menghasilkan RMSE sebesar **0.95**, menunjukkan tingkat akurasi yang cukup baik dalam memprediksi rating pengguna terhadap film yang belum pernah mereka nilai.
+
+---
+
+### Kesimpulan:
+
+Penggunaan Precision\@K untuk CBF cocok karena fokusnya adalah kualitas rekomendasi top-N berdasarkan konten, sementara RMSE tepat untuk CF karena menilai akurasi prediksi rating numerik. Kombinasi dua metrik ini membantu memberikan gambaran menyeluruh performa sistem rekomendasi dari dua pendekatan yang berbeda.
+
+---
+
+Jika Anda mau, saya juga bisa bantu buatkan laporan evaluasi yang lebih formal atau ringkas sesuai kebutuhan.
 **---Ini adalah bagian akhir laporan---**
 
 _Catatan:_
