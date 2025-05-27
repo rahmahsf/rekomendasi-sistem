@@ -1,10 +1,12 @@
 # Laporan Proyek Machine Learning - Rahmah Sary Fadiyah
 
+![Alt Text](Resource/sampul.jpg)
+
 ## Project Overview
 
-Seiring dengan pesatnya pertumbuhan industri hiburan digital, terutama platform layanan streaming seperti Netflix, Disney+, dan Amazon Prime, pengguna dihadapkan pada pilihan ribuan film dan serial setiap harinya. Tantangan utama yang muncul adalah bagaimana menyajikan konten yang relevan dan sesuai dengan preferensi pengguna tanpa membuat mereka kewalahan dengan terlalu banyak pilihan. Oleh karena itu, sistem rekomendasi menjadi komponen penting dalam meningkatkan pengalaman pengguna dengan menyarankan konten yang kemungkinan besar akan disukai pengguna.
+Seiring dengan pesatnya pertumbuhan industri hiburan digital, terutama platform layanan streaming seperti Netflix, Disney+, dan Amazon Prime, pengguna dihadapkan pada pilihan ribuan film dan serial setiap harinya. Tantangan utama yang muncul adalah bagaimana menyajikan konten yang relevan dan sesuai dengan preferensi pengguna tanpa membuat mereka kewalahan dengan terlalu banyak pilihan. Oleh karena itu, sistem rekomendasi menjadi komponen penting dalam meningkatkan pengalaman pengguna, dengan menyarankan konten yang kemungkinan besar akan disukai pengguna, sekaligus memperkuat peran online review sebagai faktor yang memengaruhi keputusan menonton secara lebih personal dan berbasis data [1].
 
-Masalah utama yang hendak diselesaikan adalah bagaimana mengidentifikasi film yang relevan bagi pengguna secara personal. Tanpa sistem rekomendasi yang efektif, pengguna bisa merasa frustasi dan kehilangan ketertarikan pada layanan yang ditawarkan. Sistem rekomendasi dapat mengatasi permasalahan ini dengan menganalisis preferensi pengguna, riwayat penelusuran, serta kesamaan antar konten atau antar pengguna lainnya [1].
+Masalah utama yang hendak diselesaikan adalah bagaimana mengidentifikasi film yang relevan bagi pengguna secara personal. Tanpa sistem rekomendasi yang efektif, pengguna bisa merasa frustasi dan kehilangan ketertarikan pada layanan yang ditawarkan. Sistem rekomendasi dapat mengatasi permasalahan ini dengan menganalisis preferensi pengguna serta kesamaan antar konten atau antar pengguna lainnya [2].
 
 ## Business Understanding
 ### Problem Statements
@@ -473,4 +475,7 @@ Untuk menjawab kedua pertanyaan tersebut dan menghubungkannya dengan model serta
 ---
 ## REFRENSI
 
+[1] [Afriani, A. L., Suprayitno, D., & Misbah, N. A. (2023). Pengaruh Media Online Reviews terhadap Keputusan Menonton Film. Jurnal Penelitian Sosial Ilmu Komunikasi, 7(1), 1-10.](https://journal.unpak.ac.id/index.php/apik/article/view/7573)
+
+[2] [Arfisko, H. H., & Wibowo, A. T. (2022). Sistem Rekomendasi Film Menggunakan Metode Hybrid Collaborative Filtering Dan Content-Based Filtering. eProceedings of Engineering, 9(3).](https://openlibrarypublications.telkomuniversity.ac.id/index.php/engineering/article/view/18066)
 **---Ini adalah bagian akhir laporan---**
