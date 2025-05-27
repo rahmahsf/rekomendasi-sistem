@@ -157,13 +157,107 @@ Penjelasaanya:
 
 
 ## Data Preparation
-Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
 
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menjelaskan proses data preparation yang dilakukan
-- Menjelaskan alasan mengapa diperlukan tahapan data preparation tersebut.
+- **Menghapus atribut yang tidak digunakan**
+  Field `id`, `index`, dan `homepage` kemungkinan besar **dihapus atau tidak digunakan dalam proyek sistem rekomendasi film berbasis machine learning** karena alasan berikut:
+   - **`id` dan `index`** Biasanya hanya digunakan untuk identifikasi internal dalam dataset (misalnya sebagai primary key). Tidak mengandung informasi bermakna untuk pemodelan atau analisis.
+   - **`homepage`** Merupakan link ke situs resmi film (misalnya situs promosi). Tidak memberikan nilai prediktif untuk sistem rekomendasi. Sering kali data ini kosong atau tidak konsisten, sehingga tidak layak diproses lebih lanjut.
+
+- **Menghapus missing value**
+  Menghapus missing value penting dilakukan untuk menjaga kualitas data dan mencegah error saat proses analisis atau pelatihan model machine learning. dan setelah dihapus datanya terdapat **3757 baris** dan **21 kolom**
 
 ## Modeling
+
+1. **Content-Based Filtering (CBF)**
+   Content-Based Filtering merupakan pendekatan sistem rekomendasi yang merekomendasikan item (dalam hal ini film) kepada pengguna berdasarkan kemiripan konten (genre, deskripsi, dan informasi metadata lainnya) dengan film yang pernah disukai atau ditonton oleh pengguna tersebut. Adapun Tahapan model ini yaitu:
+    - Preprocessing:
+      - Mengambil kolom genres dari dataset film.
+       - Melakukan pemrosesan teks menggunakan TF-IDF Vectorizer untuk mengubah teks genre menjadi vektor numerik.
+    - Membangun Model Similarity:
+        - Menghitung cosine similarity antara film satu dengan lainnya menggunakan hasil dari TF-IDF.
+    - Fungsi Rekomendasi:
+        - Sistem akan menerima satu input film (misalnya “Avatar”).
+        - Model menghitung kemiripan film input dengan semua film lainnya.
+        - Fungsi content_based_inference menghasilkan rekomendasi film berdasarkan kemiripan konten dengan film yang dipilih pengguna, dalam hal ini "Avatar", menggunakan pendekatan Content-Based Filtering. Dengan memanfaatkan vektor TF-IDF dari genre dan menghitung cosine similarity antar film, fungsi ini menampilkan lima film teratas yang paling mirip dengan "Avatar" beserta skor kemiripannya. Pendekatan ini memungkinkan sistem merekomendasikan film lain yang memiliki genre atau elemen cerita serupa, meskipun belum pernah ditonton sebelumnya oleh pengguna, sehingga memberikan rekomendasi yang relevan secara tematik dan akan menampilkam top 5.
+
+    Berikut adalah tabel hasil rekomendasinya:
+
+    | No | Judul Film                 | Similarity |
+    | -- | -------------------------- | ---------- |
+    | 1  | Man of Steel               | 1.0000     |
+    | 2  | X-Men: Days of Future Past | 1.0000     |
+    | 3  | Jupiter Ascending          | 1.0000     |
+    | 4  | The Wolverine              | 1.0000     |
+    | 5  | Superman                   | 1.0000     |
+
+    Hasil rekomendasi di atas menunjukkan bahwa kelima film yang direkomendasikan memiliki nilai *similarity* sebesar **1.0000** terhadap film *Avatar*, berdasarkan pendekatan **Content-Based Filtering (CBF)** dengan fitur `genres`. Artinya, kelima film tersebut memiliki genre yang sangat mirip atau bahkan identik dengan *Avatar*, seperti **Action**, **Adventure**, **Fantasy**, atau **Science Fiction**.
+
+    Nilai *similarity* maksimum (1.0) menunjukkan bahwa vektor TF-IDF dari film-film ini berada pada arah yang sama dalam ruang vektor, menandakan kesamaan konten genre secara penuh. Ini juga bisa terjadi karena genre ditulis identik dalam bentuk string, sehingga hasil *TF-IDF* dan cosine similarity menjadi maksimal.
+
+2. **Collaborative Filtering (CF)**
+   Fungsi dan kode di atas merupakan implementasi sistem **Collaborative Filtering (CF)** menggunakan pendekatan **Matrix Factorization** dengan algoritma **Singular Value Decomposition (SVD)** dari library `Surprise`. Berikut penjelasan dari setiap bagian kode:
+   - **Dataset Interaksi Pengguna**
+
+    ```python    
+        ratings_dict = {
+    "user_id": [1, 1, 1, 2, 2, 3, 3],
+    "movie_id": [10, 20, 30, 10, 30, 20, 40],
+    "rating": [4, 5, 2, 5, 3, 4, 1]
+    }
+    ```
+    Data ini berisi **penilaian (rating)** pengguna terhadap berbagai film. Misalnya, pengguna `user_id=1` memberi rating 4 untuk `movie_id=10`, rating 5 untuk `movie_id=20`, dan seterusnya.
+
+    - **Training Model SVD**
+
+        ```python
+            algo = SVD()
+            algo.fit(trainset)
+        ```
+    Model dilatih menggunakan **SVD**, yang memfaktorkan matriks pengguna-film menjadi representasi laten dari pengguna dan film. Ini memungkinkan prediksi rating untuk film yang belum dilihat oleh pengguna.
+
+    - **Fungsi Rekomendasi**
+
+        ```python
+        def collaborative_recommendations(user_id, df_movies, algo, top_n=5):
+        ```
+
+        Fungsi ini akan merekomendasikan **Top-N film** untuk `user_id` tertentu dengan langkah:
+        1. Mengambil semua `movie_id` dari dataframe film.
+        2. Melakukan **prediksi rating** untuk setiap film menggunakan model SVD.
+        3. Mengurutkan film berdasarkan prediksi tertinggi.
+        4. Mengambil `top_n` film teratas dan mengembalikan judulnya.
+
+    - **Contoh Inference (Jika user\_id=1):**
+      Fungsi `collaborative_inference` digunakan untuk menghasilkan rekomendasi film bagi pengguna tertentu berdasarkan pendekatan **Collaborative Filtering** menggunakan algoritma SVD. Fungsi ini memprediksi rating yang mungkin diberikan oleh pengguna terhadap semua film yang tersedia, lalu mengurutkannya berdasarkan skor prediksi tertinggi. Dalam contoh penggunaan untuk `user_id=1`, sistem memberikan lima rekomendasi film dengan prediksi rating tertinggi, seperti terlihat dalam output yang mencantumkan judul film dan nilai prediksi ratingnya. Pendekatan ini memungkinkan sistem untuk merekomendasikan film yang kemungkinan besar disukai pengguna berdasarkan pola penilaian pengguna lain yang serupa, tanpa mempertimbangkan konten film seperti genre atau sinopsis.
+      Berikut adalah hasil rekomendasi film untuk **User 1** menggunakan pendekatan **Collaborative Filtering** berbasis algoritma SVD. Sistem memperkirakan seberapa besar kemungkinan pengguna akan menyukai film-film tertentu berdasarkan preferensi pengguna lain dengan pola penilaian serupa. Semua film dalam daftar memiliki **prediksi rating yang sama sebesar 3.61**, yang menunjukkan bahwa menurut model, film-film ini memiliki tingkat ketertarikan yang setara bagi User 1. Ini bisa terjadi karena data interaksi pengguna masih terbatas, sehingga model belum cukup terkalibrasi untuk membedakan preferensi secara signifikan.
+
+Berikut tabel hasil rekomendasinya:
+
+| No. | Judul Film                               | Predicted Rating |
+| --- | ---------------------------------------- | ---------------- |
+| 1   | Avatar                                   | 3.61             |
+| 2   | Pirates of the Caribbean: At World's End | 3.61             |
+| 3   | Spectre                                  | 3.61             |
+| 4   | The Dark Knight Rises                    | 3.61             |
+| 5   | John Carter                              | 3.61             |
+
+Pendekatan Collaborative Filtering seperti ini sangat berguna karena bisa menemukan keterkaitan film yang tidak terduga tanpa melihat kontennya, namun model sangat bergantung pada kualitas dan jumlah interaksi data pengguna.
+
+
+
+### ⚖️ **Kelebihan & Kekurangan**
+
+| Kelebihan                                                                   | Kekurangan                                                     |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Dapat menangkap preferensi laten pengguna                                   | Butuh cukup data interaksi pengguna                            |
+| Tidak tergantung fitur film seperti genre                                   | Tidak bisa memberi rekomendasi pada pengguna baru (cold start) |
+| Bisa merekomendasikan film yang sangat berbeda tapi disukai pengguna serupa | Tidak menjelaskan alasan rekomendasi (black-box)               |
+
+---
+
+Jika diperlukan, saya bisa bantu menampilkan hasil rekomendasinya untuk `user_id=1` dalam bentuk tabel markdown.
+
+Mengembalikan Top-N rekomendasi film yang paling mirip berdasarkan genr
 Tahapan ini membahas mengenai model sisten rekomendasi yang Anda buat untuk menyelesaikan permasalahan. Sajikan top-N recommendation sebagai output.
 
 **Rubrik/Kriteria Tambahan (Opsional)**: 
