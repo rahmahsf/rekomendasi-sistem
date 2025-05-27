@@ -196,10 +196,7 @@ Penjelasaanya:
 
 ## Evaluation
 
-Dalam proyek sistem rekomendasi ini, digunakan dua metrik evaluasi yang sesuai dengan pendekatan masing-masing:
-
-1. **Precision\@K untuk Content-Based Filtering (CBF)**
-   Precision\@K mengukur seberapa tepat rekomendasi yang diberikan dalam daftar Top-K dibandingkan dengan item yang memang relevan bagi pengguna.
+Dalam proyek sistem rekomendasi ini, digunakan Precision\@K mengukur seberapa tepat rekomendasi yang diberikan dalam daftar Top-K dibandingkan dengan item yang memang relevan bagi pengguna.
 
    Formula Precision\@K:
 
