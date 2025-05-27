@@ -154,8 +154,8 @@ Penjelasaanya:
 ## Data Preparation
 
 - **Menghapus atribut yang tidak digunakan**
-  Field `id`, `index`, dan `homepage` kemungkinan besar **dihapus atau tidak digunakan dalam proyek sistem rekomendasi film berbasis machine learning** karena alasan berikut:
-   - **`id` dan `index`** Biasanya hanya digunakan untuk identifikasi internal dalam dataset (misalnya sebagai primary key). Tidak mengandung informasi bermakna untuk pemodelan atau analisis.
+  Field `index`, dan `homepage` kemungkinan besar **dihapus atau tidak digunakan dalam proyek sistem rekomendasi film berbasis machine learning** karena alasan berikut:
+   - **`index`** Biasanya hanya digunakan untuk identifikasi internal dalam dataset (misalnya sebagai primary key). Tidak mengandung informasi bermakna untuk pemodelan atau analisis.
    - **`homepage`** Merupakan link ke situs resmi film (misalnya situs promosi). Tidak memberikan nilai prediktif untuk sistem rekomendasi. Sering kali data ini kosong atau tidak konsisten, sehingga tidak layak diproses lebih lanjut.
 
 - **Menghapus missing value**
@@ -189,19 +189,19 @@ Penjelasaanya:
 
     - **Fungsi Rekomendasi Content-Based**
         ```python
-        def content_based_recommendations(title, df_movies, cosine_sim, top_n=5):
+        def content_based_recommendations(title, df, cosine_sim, top_n=5):
         ```
 
     * Fungsi ini menerima:
 
         * `title`: Judul film yang dijadikan referensi.
-        * `df_movies`: DataFrame berisi data film.
+        * `df`: DataFrame berisi data film.
         * `cosine_sim`: Matriks kesamaan antar film.
         * `top_n`: Jumlah film teratas yang akan direkomendasikan.
 
     - **Mengambil Indeks Film Referensi**
         ```python
-        indices = pd.Series(df_movies.index, index=df_movies['title'])
+        indices = pd.Series(df.index, index=df['title'])
         idx = indices[title]
         ```
 
@@ -223,7 +223,7 @@ Penjelasaanya:
 
         ```python
         movie_indices = [i[0] for i in sim_scores]
-        return df_movies.iloc[movie_indices]['title'].tolist()
+        return df.iloc[movie_indices]['title'].tolist()
         ```
 
         * Mengambil indeks dari film yang paling mirip.
@@ -294,7 +294,7 @@ Penjelasaanya:
     - **Fungsi Rekomendasi**
 
         ```python
-        def collaborative_recommendations(user_id, df_movies, algo, top_n=5):
+        def collaborative_recommendations(user_id, df, algo, top_n=5):
         ```
 
         Fungsi ini akan merekomendasikan **Top-N film** untuk `user_id` tertentu dengan langkah:
@@ -346,11 +346,6 @@ Berikut kelebihan dan kekurangan Collaborative Filtering (CF):
 
 
 ## Evaluation
-Berikut contoh penulisan bagian **Evaluation** lengkap dengan penjelasan metrik, formula singkat, serta hasil evaluasi kedua model (Content-Based Filtering dan Collaborative Filtering) sesuai konteks proyek Anda:
-
----
-
-## Evaluation
 
 Dalam proyek sistem rekomendasi ini, digunakan dua metrik evaluasi yang sesuai dengan pendekatan masing-masing:
 
@@ -358,47 +353,123 @@ Dalam proyek sistem rekomendasi ini, digunakan dua metrik evaluasi yang sesuai d
    Precision\@K mengukur seberapa tepat rekomendasi yang diberikan dalam daftar Top-K dibandingkan dengan item yang memang relevan bagi pengguna.
 
    Formula Precision\@K:
-
-   $$
-   \text{Precision@K} = \frac{\text{Jumlah item relevan dalam Top-K rekomendasi}}{K}
-   $$
+   ![Alt Text](Resource/precision.PNG)
 
    Precision\@K membantu menilai kualitas rekomendasi yang bersifat personal dan berbasis konten, dimana fokusnya adalah meminimalkan rekomendasi yang tidak relevan bagi pengguna.
+   - Penjelasan code evaluasi:
+     Berikut adalah **penjelasan baris per baris** dari kode yang kamu tulis untuk menghitung *Precision\@5* pada sistem **Content-Based Filtering (CBF)**:
 
-2. **Root Mean Square Error (RMSE) untuk Collaborative Filtering (CF)**
+        - Fungsi `precision_at_k()`
+
+            ```python
+            def precision_at_k(recommended, relevant, k=5):
+                recommended_k = recommended[:k]
+                relevant_set = set(relevant)
+                hits = sum([1 for movie in recommended_k if movie in relevant_set])
+                return hits / k if k > 0 else 0
+            ```
+            Penjelasan:
+
+            * `recommended`: daftar film yang direkomendasikan.
+            * `relevant`: daftar film yang dianggap relevan (misalnya, film yang diberi rating ≥ 4 oleh user).
+            * `k`: jumlah rekomendasi teratas yang akan dievaluasi (default = 5).
+            * `recommended_k`: hanya ambil `top-k` film dari hasil rekomendasi.
+            * `relevant_set`: ubah list ke `set` agar pencarian lebih efisien.
+            * `hits`: hitung berapa dari `recommended_k` yang muncul di `relevant_set`.
+            * Return: nilai **Precision\@k = hits / k**.
+
+    - Daftar Film Relevan (yang disukai user):
+
+        ```python
+        user_relevant_movies = [
+            'Spectre',
+            'The Dark Knight Rises',
+            'Jupiter Ascending',
+            'Man of Steel',
+            'superman',
+            'X-Men: Days of Future Past'
+        ]
+        ```
+        Ini adalah **ground truth**, yaitu film yang diketahui disukai user (misal karena user pernah memberi rating tinggi).
+
+    - Ambil Rekomendasi CBF:
+
+        ```python
+            recommended_movies = content_based_recommendations('Avatar', df, cosine_sim, top_n=5)
+        ```
+
+        * Fungsi `content_based_recommendations()` menggunakan **TF-IDF** dari kolom genre untuk mencari film yang paling mirip dengan `'Avatar'`.
+        * Hasilnya: list 5 film teratas berdasarkan kemiripan konten.
+
+    - Cetak Rekomendasi:
+
+        ```python
+        print(f"Recommended movies for 'Avatar' (CBF): {recommended_movies}")
+        ```
+
+        * Untuk melihat output rekomendasi yang dihasilkan.
+
+    - Hitung Precision\@5:
+
+        ```python
+        precision = precision_at_k(recommended_movies, user_relevant_movies, k=5)
+        print(f"Precision@5 (CBF): {precision:.2f}")
+        ```
+
+        * Precision dihitung berdasarkan berapa film dari 5 rekomendasi yang juga termasuk dalam daftar film yang disukai user.
+        * `:.2f` digunakan agar hasil dicetak dalam **dua angka di belakang koma**.
+    Hasilnya Sistem merekomendasikan 5 film berdasarkan kemiripan konten dengan Avatar, dan 3 dari 5 film tersebut ternyata memang disukai oleh pengguna. Dengan demikian, nilai Precision@5 sebesar 0.60 menunjukkan bahwa 60% dari rekomendasi yang diberikan relevan bagi pengguna.
+
+3. **Root Mean Square Error (RMSE) untuk Collaborative Filtering (CF)**
    RMSE mengukur selisih rata-rata kuadrat antara rating yang diprediksi model dengan rating asli pengguna. Nilai RMSE yang lebih kecil menandakan prediksi yang lebih akurat.
 
    Formula RMSE:
 
-   $$
-   RMSE = \sqrt{\frac{1}{N} \sum_{i=1}^N (r_i - \hat{r_i})^2}
-   $$
-
-   dimana $r_i$ adalah rating asli dan $\hat{r_i}$ adalah rating prediksi.
+   ![Alt Text](Resource/rmse.PNG)
 
    RMSE digunakan untuk mengevaluasi performa model matrix factorization pada Collaborative Filtering yang memprediksi rating numerik.
 
----
+Berikut penjelasan dari potongan kode evaluasi RMSE:
 
-### Hasil Evaluasi:
+    ```python
 
-* **Content-Based Filtering (CBF)**
-  Dengan menggunakan Precision\@5, sistem memberikan nilai Precision sebesar **0.40**, yang berarti dari 5 rekomendasi teratas, rata-rata 2 rekomendasi sesuai dengan preferensi pengguna berdasarkan rating tinggi yang pernah diberikan sebelumnya.
+        # Prediksi di test set
+        predictions = algo.test(testset)
+        ```
 
-* **Collaborative Filtering (CF)**
-  Model SVD yang dilatih menghasilkan RMSE sebesar **0.95**, menunjukkan tingkat akurasi yang cukup baik dalam memprediksi rating pengguna terhadap film yang belum pernah mereka nilai.
+* Baris ini menjalankan model collaborative filtering (`algo`) terhadap *test set* (`testset`) untuk menghasilkan prediksi rating dari pengguna terhadap item (misalnya film).
+* `predictions` akan berisi daftar objek prediksi (berisi user ID, item ID, rating aktual, dan rating prediksi).
 
----
+```python
+# Hitung RMSE
+rmse_score = accuracy.rmse(predictions)
+```
+
+* Fungsi `accuracy.rmse()` dari pustaka `surprise` menghitung **Root Mean Squared Error (RMSE)** antara rating yang diprediksi dan rating aktual dalam `predictions`.
+* RMSE mengukur rata-rata kesalahan kuadrat dari prediksi, lalu diakarkan. Nilai RMSE yang lebih rendah menunjukkan model yang lebih akurat.
+
+Hasil dari Nilai RMSE: 2.1210 menunjukkan bahwa rata-rata selisih antara rating yang diprediksi oleh sistem dan rating sebenarnya 
 
 ### Kesimpulan:
 
-Penggunaan Precision\@K untuk CBF cocok karena fokusnya adalah kualitas rekomendasi top-N berdasarkan konten, sementara RMSE tepat untuk CF karena menilai akurasi prediksi rating numerik. Kombinasi dua metrik ini membantu memberikan gambaran menyeluruh performa sistem rekomendasi dari dua pendekatan yang berbeda.
+Untuk menjawab kedua pertanyaan tersebut dan menghubungkannya dengan model serta evaluasi yang telah dibuat:
 
 ---
 
-Jika Anda mau, saya juga bisa bantu buatkan laporan evaluasi yang lebih formal atau ringkas sesuai kebutuhan.
-**---Ini adalah bagian akhir laporan---**
+1. **Bagaimana cara membantu pengguna menemukan film yang sesuai dengan selera dan preferensi mereka di tengah banyaknya pilihan film yang tersedia?**
+   Salah satu cara efektif adalah dengan membangun **sistem rekomendasi berbasis konten (Content-Based Filtering)** dan **Collaborative Filtering**.
 
-_Catatan:_
-- _Anda dapat menambahkan gambar, kode, atau tabel ke dalam laporan jika diperlukan. Temukan caranya pada contoh dokumen markdown di situs editor [Dillinger](https://dillinger.io/), [Github Guides: Mastering markdown](https://guides.github.com/features/mastering-markdown/), atau sumber lain di internet. Semangat!_
-- Jika terdapat penjelasan yang harus menyertakan code snippet, tuliskan dengan sewajarnya. Tidak perlu menuliskan keseluruhan kode project, cukup bagian yang ingin dijelaskan saja.
+    * **Content-Based Filtering (CBF)** merekomendasikan film berdasarkan kemiripan konten, seperti genre atau deskripsi film yang disukai sebelumnya oleh pengguna.
+    * Misalnya, jika pengguna menyukai film *Avatar*, sistem menyarankan film seperti *Man of Steel* atau *X-Men: Days of Future Past* karena memiliki genre serupa.
+
+    Evaluasi menggunakan **Precision\@5** menunjukkan seberapa relevan rekomendasi yang diberikan terhadap preferensi nyata pengguna. Precision sebesar **0.60** berarti 3 dari 5 rekomendasi benar-benar sesuai dengan preferensi pengguna—ini menunjukkan sistem mampu membantu pengguna menavigasi pilihan film secara lebih efisien dan personal.
+
+
+2. **Bagaimana cara meningkatkan kepuasan dan keterlibatan pengguna melalui sistem rekomendasi yang lebih tepat sasaran?**
+
+    Dengan menggabungkan model **Collaborative Filtering (CF)**, sistem dapat belajar dari perilaku pengguna lain dengan preferensi serupa, sehingga dapat merekomendasikan film yang mungkin belum pernah dilihat tetapi disukai pengguna lain yang mirip. Evaluasi menggunakan **RMSE (Root Mean Squared Error)** sebesar **2.1210** menunjukkan seberapa akurat model memprediksi rating pengguna. Meskipun belum sempurna, nilai ini bisa ditingkatkan dengan data yang lebih banyak dan model yang lebih kompleks (misalnya matrix factorization atau neural CF). Dengan memanfaatkan kedua pendekatan dan mengukur performanya menggunakan **Precision** dan **RMSE**, sistem dapat terus ditingkatkan untuk memberi rekomendasi yang semakin akurat, meningkatkan kepuasan dan keterlibatan pengguna secara signifikan.
+
+---
+## REFRENSI
+
+**---Ini adalah bagian akhir laporan---**
