@@ -191,6 +191,17 @@ Penjelasaanya:
       - Film yang sama dengan `nama_movie` dihapus agar tidak merekomendasikan film itu sendiri.
       - Hasil dikembalikan sebagai DataFrame berisi judul dan genre dari film-film rekomendasi
 
+**Kelebihan Content-Based Filtering (CBF):**
+
+* Rekomendasi bersifat personal karena didasarkan pada preferensi dan riwayat pengguna sendiri.
+* Tidak bergantung pada data pengguna lain, sehingga cocok untuk pengguna baru dengan aktivitas yang cukup.
+* Dapat merekomendasikan item unik yang serupa dengan yang sudah disukai pengguna.
+
+**Kekurangan Content-Based Filtering (CBF):**
+
+* Terbatas pada fitur konten yang tersedia, sehingga sulit merekomendasikan item yang sangat berbeda (kurang eksplorasi).
+* Rentan terhadap masalah *overfitting* pada preferensi lama pengguna (rekomendasi monoton).
+* Membutuhkan data deskriptif yang lengkap dan berkualitas untuk setiap item agar efektif.
 
 ## Evaluation
 
