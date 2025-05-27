@@ -353,6 +353,7 @@ Dalam proyek sistem rekomendasi ini, digunakan dua metrik evaluasi yang sesuai d
    Precision\@K mengukur seberapa tepat rekomendasi yang diberikan dalam daftar Top-K dibandingkan dengan item yang memang relevan bagi pengguna.
 
    Formula Precision\@K:
+
    ![Alt Text](Resource/precision.PNG)
 
    Precision\@K membantu menilai kualitas rekomendasi yang bersifat personal dan berbasis konten, dimana fokusnya adalah meminimalkan rekomendasi yang tidak relevan bagi pengguna.
