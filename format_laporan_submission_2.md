@@ -149,11 +149,9 @@ Penjelasaanya:
 
 ## Data Preparation
 
-- Membuat sebuah DataFrame baru bernama movie_new yang hanya berisi tiga kolom penting (id, movie_name, dan genre) dari DataFrame asli df. Tujuannya adalah untuk menyederhanakan data agar bisa digunakan lebih mudah untuk keperluan seperti sistem rekomendasi berbasis konten (Content-Based Filtering / CBF).
+- **Membuat sebuah DataFrame baru** bernama movie_new yang hanya berisi tiga kolom penting (id, movie_name, dan genre) dari DataFrame asli df. Tujuannya adalah untuk menyederhanakan data agar bisa digunakan lebih mudah untuk keperluan seperti sistem rekomendasi berbasis konten (Content-Based Filtering / CBF).
 
-- **Menghapus missing value**
-
-    jumlah data dan kolom setelah dihapus adalah 4775 baris dan 3 kolom
+- **Menghapus missing value** jumlah data dan kolom setelah dihapus adalah 4775 baris dan 3 kolom
 
 ## Modeling
 
