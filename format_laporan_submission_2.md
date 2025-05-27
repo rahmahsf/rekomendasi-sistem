@@ -252,18 +252,29 @@ Penjelasaanya:
     Nilai *similarity* maksimum (1.0) menunjukkan bahwa vektor TF-IDF dari film-film ini berada pada arah yang sama dalam ruang vektor, menandakan kesamaan konten genre secara penuh. Ini juga bisa terjadi karena genre ditulis identik dalam bentuk string, sehingga hasil *TF-IDF* dan cosine similarity menjadi maksimal.
 
    - **Kelebihan & Kekurangan**
-     
-     | Kelebihan                           | Penjelasan                                                                                                |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Tidak butuh interaksi pengguna lain | CBF hanya bergantung pada informasi konten item yang tersedia. Cocok untuk sistem baru (cold-start user). |
-| Personal dan transparan             | Rekomendasi dihasilkan berdasarkan preferensi pengguna yang jelas (misal, genre yang sering dipilih).     |
-| Mudah diinterpretasi                | Mudah menjelaskan kenapa sistem merekomendasikan film tertentu.                                           |
- 
-    | Kekurangan                                  | Penjelasan                                                                     |
-| ------------------------------------------- | ------------------------------------------------------------------------------ |
-| Tidak bisa merekomendasikan genre baru      | Sistem tidak bisa keluar dari pola preferensi yang sama (over-specialization). |
-| Butuh representasi konten yang bagus        | Jika genre/deskripsi tidak lengkap, performa sistem menurun.                   |
-| Tidak mempertimbangkan rating pengguna lain | Kurang efektif menangkap tren umum dari komunitas pengguna.                    |
+     Berikut kelebihan dan kekurangan Content-Based Filtering (CBF) :
+     - Kelebihan Content-Based Filtering (CBF)
+
+        * **Tidak butuh interaksi pengguna lain**
+  CBF hanya bergantung pada informasi konten item yang tersedia, sehingga cocok untuk sistem baru atau pengguna baru (cold-start user).
+
+        * **Personal dan transparan**
+  Rekomendasi dihasilkan berdasarkan preferensi pengguna yang jelas, seperti genre atau atribut lain yang sering dipilih oleh pengguna.
+
+        * **Mudah diinterpretasi**
+  Sistem mudah dijelaskan kenapa merekomendasikan film tertentu karena dasar rekomendasinya jelas, yaitu kesamaan konten.
+
+    - Kekurangan Content-Based Filtering (CBF)
+
+        * **Tidak bisa merekomendasikan genre baru**
+  Sistem cenderung memberikan rekomendasi dalam pola preferensi yang sama (over-specialization) dan sulit keluar dari zona tersebut.
+
+        * **Butuh representasi konten yang lengkap dan bagus**
+  Jika data genre atau deskripsi film kurang lengkap atau tidak akurat, maka performa sistem akan menurun.
+
+        * **Tidak mempertimbangkan rating atau interaksi pengguna lain**
+  Sistem kurang efektif dalam menangkap tren umum atau popularitas film di komunitas pengguna secara keseluruhan.
+
 
 
 3. **Collaborative Filtering (CF)**
@@ -316,14 +327,30 @@ Berikut tabel hasil rekomendasinya:
 Pendekatan Collaborative Filtering seperti ini sangat berguna karena bisa menemukan keterkaitan film yang tidak terduga tanpa melihat kontennya, namun model sangat bergantung pada kualitas dan jumlah interaksi data pengguna.
 
 **Kelebihan & Kekurangan**
+Berikut kelebihan dan kekurangan Collaborative Filtering (CF):
 
-| Kelebihan                                                                   | Kekurangan                                                     |
-| --------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Dapat menangkap preferensi laten pengguna                                   | Butuh cukup data interaksi pengguna                            |
-| Tidak tergantung fitur film seperti genre                                   | Tidak bisa memberi rekomendasi pada pengguna baru (cold start) |
-| Bisa merekomendasikan film yang sangat berbeda tapi disukai pengguna serupa | Tidak menjelaskan alasan rekomendasi (black-box)               |
+ - Kelebihan Collaborative Filtering (CF)
 
----
+    * **Dapat menangkap preferensi laten pengguna**
+       CF bisa menemukan pola tersembunyi dari interaksi pengguna yang tidak terlihat langsung dari fitur film.
+
+    * **Tidak tergantung fitur film seperti genre**
+      Rekomendasi berdasarkan pola interaksi pengguna tanpa perlu informasi konten detail film.
+
+    * **Bisa merekomendasikan film yang sangat berbeda tapi disukai pengguna serupa**
+      Sistem mampu memberikan rekomendasi dari film-film yang beragam, selama pengguna lain dengan preferensi serupa menyukainya.
+
+- Kekurangan Collaborative Filtering (CF)
+
+    * **Butuh cukup data interaksi pengguna**
+      CF membutuhkan data rating atau interaksi dalam jumlah besar agar bisa bekerja efektif.
+
+    * **Tidak bisa memberi rekomendasi pada pengguna baru (cold start)**
+      Pengguna yang baru tidak memiliki data interaksi, sehingga sulit sistem memberikan rekomendasi tepat.
+
+    * **Tidak menjelaskan alasan rekomendasi (black-box)**
+      Rekomendasi sering kali sulit dijelaskan secara transparan karena berdasarkan pola statistik bukan konten langsung.
+
 
 ## Evaluation
 Pada bagian ini Anda perlu menyebutkan metrik evaluasi yang digunakan. Kemudian, jelaskan hasil proyek berdasarkan metrik evaluasi tersebut.
