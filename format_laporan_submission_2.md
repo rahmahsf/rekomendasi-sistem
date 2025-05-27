@@ -169,16 +169,73 @@ Penjelasaanya:
 ## Modeling
 
 1. **Content-Based Filtering (CBF)**
-   Content-Based Filtering merupakan pendekatan sistem rekomendasi yang merekomendasikan item (dalam hal ini film) kepada pengguna berdasarkan kemiripan konten (genre, deskripsi, dan informasi metadata lainnya) dengan film yang pernah disukai atau ditonton oleh pengguna tersebut. Adapun Tahapan model ini yaitu:
-    - Preprocessing:
-      - Mengambil kolom genres dari dataset film.
-       - Melakukan pemrosesan teks menggunakan TF-IDF Vectorizer untuk mengubah teks genre menjadi vektor numerik.
-    - Membangun Model Similarity:
-        - Menghitung cosine similarity antara film satu dengan lainnya menggunakan hasil dari TF-IDF.
-    - Fungsi Rekomendasi:
-        - Sistem akan menerima satu input film (misalnya “Avatar”).
-        - Model menghitung kemiripan film input dengan semua film lainnya.
-        - Fungsi content_based_inference menghasilkan rekomendasi film berdasarkan kemiripan konten dengan film yang dipilih pengguna, dalam hal ini "Avatar", menggunakan pendekatan Content-Based Filtering. Dengan memanfaatkan vektor TF-IDF dari genre dan menghitung cosine similarity antar film, fungsi ini menampilkan lima film teratas yang paling mirip dengan "Avatar" beserta skor kemiripannya. Pendekatan ini memungkinkan sistem merekomendasikan film lain yang memiliki genre atau elemen cerita serupa, meskipun belum pernah ditonton sebelumnya oleh pengguna, sehingga memberikan rekomendasi yang relevan secara tematik dan akan menampilkam top 5.
+   Content-Based Filtering merupakan pendekatan sistem rekomendasi yang merekomendasikan item (dalam hal ini film) kepada pengguna berdasarkan kemiripan konten (genre, deskripsi, dan informasi metadata lainnya) dengan film yang pernah disukai atau ditonton oleh pengguna tersebut. Berikut adalah penjelasan **per bagian kode** dari implementasi sistem **Content-Based Filtering (CBF)** menggunakan **TF-IDF** dan **cosine similarity**:
+   - **Membangun TF-IDF Matrix**
+
+        ```python
+        tfidf = TfidfVectorizer(stop_words='english')
+        tfidf_matrix = tfidf.fit_transform(df['genres'])
+        ```
+    * `TfidfVectorizer(stop_words='english')`:
+      * Digunakan untuk mengubah data teks (dalam hal ini kolom `genres`) menjadi representasi numerik berbasis **TF-IDF (Term Frequency-Inverse Document Frequency)**.
+       * `stop_words='english'` akan mengabaikan kata-kata umum dalam bahasa Inggris (seperti *the*, *and*, *is*, dll.) agar tidak memengaruhi hasil.
+    * `tfidf.fit_transform(df['genres'])`:
+      * Membangun vektor TF-IDF untuk setiap film berdasarkan nilai genre-nya.
+      * Hasil akhirnya adalah **matriks berdimensi (jumlah film x jumlah kata unik di semua genre)**.
+        
+   - **Menghitung Cosine Similarity**
+
+        ```python
+        cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+        ```
+
+    * `linear_kernel()` digunakan untuk menghitung **cosine similarity** antar semua pasangan film berdasarkan TF-IDF matrix.
+    * Output-nya adalah matriks kesamaan (similarity matrix) berukuran `(n_film x n_film)` di mana setiap nilai `[i][j]` menunjukkan seberapa mirip film ke-i dan film ke-j berdasarkan genre.
+
+    - **Fungsi Rekomendasi Content-Based**
+        ```python
+        def content_based_recommendations(title, df_movies, cosine_sim, top_n=5):
+        ```
+
+    * Fungsi ini menerima:
+
+        * `title`: Judul film yang dijadikan referensi.
+        * `df_movies`: DataFrame berisi data film.
+        * `cosine_sim`: Matriks kesamaan antar film.
+        * `top_n`: Jumlah film teratas yang akan direkomendasikan.
+
+    - **Mengambil Indeks Film Referensi**
+        ```python
+        indices = pd.Series(df_movies.index, index=df_movies['title'])
+        idx = indices[title]
+        ```
+
+        * Membuat `Series` yang memetakan judul film ke indeks-nya dalam DataFrame.
+        * `idx` adalah indeks dari film yang menjadi input (judul yang ingin dicari rekomendasinya).
+
+    - **Mengambil dan Mengurutkan Skor Similarity**
+
+        ```python
+        sim_scores = list(enumerate(cosine_sim[idx]))
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+        sim_scores = sim_scores[1:top_n+1]
+        ```
+        * `enumerate(cosine_sim[idx])`: Mengambil semua nilai kesamaan film referensi dengan film lain.
+        * `sorted(..., reverse=True)`: Mengurutkan berdasarkan skor similarity tertinggi.
+        * `sim_scores[1:top_n+1]`: Mengambil `top_n` film teratas, dengan menghindari film itu sendiri (karena skor similarity-nya pasti 1 dengan dirinya sendiri).
+
+    - **Mengambil Judul Film Hasil Rekomendasi**
+
+        ```python
+        movie_indices = [i[0] for i in sim_scores]
+        return df_movies.iloc[movie_indices]['title'].tolist()
+        ```
+
+        * Mengambil indeks dari film yang paling mirip.
+        * Mengambil judul-judul film berdasarkan indeks tersebut dan mengembalikannya dalam bentuk list.
+
+    - **INFERENCE**
+      Dengan memanfaatkan vektor TF-IDF dari genre dan menghitung cosine similarity antar film, fungsi ini menampilkan lima film teratas yang paling mirip dengan "Avatar" beserta skor kemiripannya. Pendekatan ini memungkinkan sistem merekomendasikan film lain yang memiliki genre atau elemen cerita serupa, meskipun belum pernah ditonton sebelumnya oleh pengguna, sehingga memberikan rekomendasi yang relevan secara tematik dan akan menampilkam top 5.
 
     Berikut adalah tabel hasil rekomendasinya:
 
@@ -194,7 +251,22 @@ Penjelasaanya:
 
     Nilai *similarity* maksimum (1.0) menunjukkan bahwa vektor TF-IDF dari film-film ini berada pada arah yang sama dalam ruang vektor, menandakan kesamaan konten genre secara penuh. Ini juga bisa terjadi karena genre ditulis identik dalam bentuk string, sehingga hasil *TF-IDF* dan cosine similarity menjadi maksimal.
 
-2. **Collaborative Filtering (CF)**
+   - **Kelebihan & Kekurangan**
+     
+     | Kelebihan                           | Penjelasan                                                                                                |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Tidak butuh interaksi pengguna lain | CBF hanya bergantung pada informasi konten item yang tersedia. Cocok untuk sistem baru (cold-start user). |
+| Personal dan transparan             | Rekomendasi dihasilkan berdasarkan preferensi pengguna yang jelas (misal, genre yang sering dipilih).     |
+| Mudah diinterpretasi                | Mudah menjelaskan kenapa sistem merekomendasikan film tertentu.                                           |
+ 
+    | Kekurangan                                  | Penjelasan                                                                     |
+| ------------------------------------------- | ------------------------------------------------------------------------------ |
+| Tidak bisa merekomendasikan genre baru      | Sistem tidak bisa keluar dari pola preferensi yang sama (over-specialization). |
+| Butuh representasi konten yang bagus        | Jika genre/deskripsi tidak lengkap, performa sistem menurun.                   |
+| Tidak mempertimbangkan rating pengguna lain | Kurang efektif menangkap tren umum dari komunitas pengguna.                    |
+
+
+3. **Collaborative Filtering (CF)**
    Fungsi dan kode di atas merupakan implementasi sistem **Collaborative Filtering (CF)** menggunakan pendekatan **Matrix Factorization** dengan algoritma **Singular Value Decomposition (SVD)** dari library `Surprise`. Berikut penjelasan dari setiap bagian kode:
    - **Dataset Interaksi Pengguna**
 
@@ -243,9 +315,7 @@ Berikut tabel hasil rekomendasinya:
 
 Pendekatan Collaborative Filtering seperti ini sangat berguna karena bisa menemukan keterkaitan film yang tidak terduga tanpa melihat kontennya, namun model sangat bergantung pada kualitas dan jumlah interaksi data pengguna.
 
-
-
-### ⚖️ **Kelebihan & Kekurangan**
+**Kelebihan & Kekurangan**
 
 | Kelebihan                                                                   | Kekurangan                                                     |
 | --------------------------------------------------------------------------- | -------------------------------------------------------------- |
@@ -254,15 +324,6 @@ Pendekatan Collaborative Filtering seperti ini sangat berguna karena bisa menemu
 | Bisa merekomendasikan film yang sangat berbeda tapi disukai pengguna serupa | Tidak menjelaskan alasan rekomendasi (black-box)               |
 
 ---
-
-Jika diperlukan, saya bisa bantu menampilkan hasil rekomendasinya untuk `user_id=1` dalam bentuk tabel markdown.
-
-Mengembalikan Top-N rekomendasi film yang paling mirip berdasarkan genr
-Tahapan ini membahas mengenai model sisten rekomendasi yang Anda buat untuk menyelesaikan permasalahan. Sajikan top-N recommendation sebagai output.
-
-**Rubrik/Kriteria Tambahan (Opsional)**: 
-- Menyajikan dua solusi rekomendasi dengan algoritma yang berbeda.
-- Menjelaskan kelebihan dan kekurangan dari solusi/pendekatan yang dipilih.
 
 ## Evaluation
 Pada bagian ini Anda perlu menyebutkan metrik evaluasi yang digunakan. Kemudian, jelaskan hasil proyek berdasarkan metrik evaluasi tersebut.
