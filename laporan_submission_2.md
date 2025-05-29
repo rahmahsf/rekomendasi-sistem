@@ -166,6 +166,7 @@ Penjelasaanya:
     - **`tfidf_matrix.todense()`** akan mengubah matriks TF-IDF yang awalnya berbentuk sparse (jarang) menjadi bentuk dense (penuh), yaitu array 2D berisi nilai bobot TF-IDF untuk setiap genre di setiap film. Hasilnya bisa sangat besar tergantung jumlah film dan jumlah fitur unik.
        
   - **melihat sebagian kecil dari matriks TF-IDF** untuk Untuk mengecek seperti apa vektor TF-IDF film-film tertentu, terhadap beberapa kata (fitur genre). Berikut penejelasan dari code:
+    
         - `tfidf_matrix.todense()` Mengubah matriks TF-IDF yang berupa sparse matrix menjadi matriks dense (biasa) agar mudah diolah dalam bentuk DataFrame. Ini membuat seluruh data TF-IDF menjadi array 2 dimensi.
          - `columns=tf.get_feature_names_out()` Memberikan nama kolom DataFrame sesuai fitur-fitur yang ditemukan oleh `TfidfVectorizer`. Fitur-fitur ini adalah kata-kata unik dari kolom `genre` setelah diproses TF-IDF.
          - `index=movie_new.movie_name` Menjadikan nama film (`movie_name`) sebagai label baris (index) pada DataFrame sehingga setiap baris merepresentasikan sebuah film.
