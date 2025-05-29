@@ -152,28 +152,31 @@ Penjelasaanya:
 - **Membuat sebuah DataFrame baru** bernama movie_new yang hanya berisi tiga kolom penting (id, movie_name, dan genre) dari DataFrame asli df. Tujuannya adalah untuk menyederhanakan data agar bisa digunakan lebih mudah untuk keperluan seperti sistem rekomendasi berbasis konten (Content-Based Filtering / CBF).
 
 - **Menghapus missing value** jumlah data dan kolom setelah dihapus adalah 4775 baris dan 3 kolom untuk memastikan data yang digunakan bersih dan lengkap agar proses analisis atau pemodelan tidak terganggu oleh nilai yang hilang, yang bisa menyebabkan error atau hasil yang tidak akurat.
-
-## Modeling
-
-1. **Content-Based Filtering (CBF)**
-   Content-Based Filtering merupakan pendekatan sistem rekomendasi yang merekomendasikan item (dalam hal ini film) kepada pengguna berdasarkan kemiripan konten (genre, deskripsi, dan informasi metadata lainnya) dengan film yang pernah disukai atau ditonton oleh pengguna tersebut. Berikut adalah penjelasan **per bagian kode** dari implementasi sistem **Content-Based Filtering (CBF)**:
-    - **Inisialisasi TfidfVectorizer**
-      - `tf = TfidfVectorizer()` Membuat objek TfidfVectorizer dari Scikit-learn.
-      - `tf.fit(movie_new['genre'])` Proses fit dilakukan ke kolom 'genre' dari DataFrame movie_new.
-      -  `tf.get_feature_names_out()` Mengambil daftar semua fitur unik (genre terms) yang ditemukan oleh TfidfVectorizer
+  
+ - **Inisialisasi TfidfVectorizer** untuk mengubah data teks (dalam hal ini, genre film) menjadi representasi numerik (vektor) agar bisa diproses oleh algoritma seperti cosine similarity. Berikut penjelasan code:
+    - `tf = TfidfVectorizer()` Membuat objek TfidfVectorizer dari Scikit-learn.
+    - `tf.fit(movie_new['genre'])` Proses fit dilakukan ke kolom 'genre' dari DataFrame movie_new.
+    -  `tf.get_feature_names_out()` Mengambil daftar semua fitur unik (genre terms) yang ditemukan oleh TfidfVectorizer
         
-    - **tfidf_matrix**
-      - `tf.fit_transform(movie_new['genre'])` Menerapkan fit() untuk mempelajari semua kata unik dalam genre. Kemudian langsung transform() untuk mengubah tiap genre film menjadi vektor numerik berdimensi jumlah kata unik (dalam semua genre).
-      - `tfidf_matrix.shape` Mengembalikan tuple (baris, kolom)
-        
-    - **`tfidf_matrix.todense()`** akan mengubah matriks TF-IDF yang awalnya berbentuk sparse (jarang) menjadi bentuk dense (penuh), yaitu array 2D berisi nilai bobot TF-IDF untuk setiap genre di setiap film. Hasilnya bisa sangat besar tergantung jumlah film dan jumlah fitur unik.
+  - **tfidf_matrix** untuk Mempelajari kata dan membentuk TF-IDF matrix.shape	Menampilkan ukuran matriks (jumlah film × jumlah kata unik). Berikut penjelasan code:
+    - `tf.fit_transform(movie_new['genre'])` Menerapkan fit() untuk mempelajari semua kata unik dalam genre. Kemudian langsung transform() untuk mengubah tiap genre film menjadi vektor numerik berdimensi jumlah kata unik (dalam semua genre).
+    - `tfidf_matrix.shape` Mengembalikan tuple (baris, kolom)
       
-    - **melihat sebagian kecil dari matriks TF-IDF**
+  - **mengubah sparse matrix jadi dense matrix (array penuh)** untuk proses mengubah, menyiapkan, atau memformat data sebelum dimasukkan ke dalam model.
+    - **`tfidf_matrix.todense()`** akan mengubah matriks TF-IDF yang awalnya berbentuk sparse (jarang) menjadi bentuk dense (penuh), yaitu array 2D berisi nilai bobot TF-IDF untuk setiap genre di setiap film. Hasilnya bisa sangat besar tergantung jumlah film dan jumlah fitur unik.
+       
+  - **melihat sebagian kecil dari matriks TF-IDF** untuk Untuk mengecek seperti apa vektor TF-IDF film-film tertentu, terhadap beberapa kata (fitur genre). Berikut penejelasan dari code:
         - `tfidf_matrix.todense()` Mengubah matriks TF-IDF yang berupa sparse matrix menjadi matriks dense (biasa) agar mudah diolah dalam bentuk DataFrame. Ini membuat seluruh data TF-IDF menjadi array 2 dimensi.
          - `columns=tf.get_feature_names_out()` Memberikan nama kolom DataFrame sesuai fitur-fitur yang ditemukan oleh `TfidfVectorizer`. Fitur-fitur ini adalah kata-kata unik dari kolom `genre` setelah diproses TF-IDF.
          - `index=movie_new.movie_name` Menjadikan nama film (`movie_name`) sebagai label baris (index) pada DataFrame sehingga setiap baris merepresentasikan sebuah film.
          - `.sample(22, axis=1)` Mengambil sampel 22 kolom (fitur genre) secara acak dari keseluruhan fitur TF-IDF. `axis=1` berarti sampling pada kolom.
          - `.sample(10, axis=0)` Mengambil sampel 10 baris (film) secara acak dari keseluruhan film yang ada. `axis=0` berarti sampling pada baris
+    
+## Modeling
+
+1. **Content-Based Filtering (CBF)**
+   Content-Based Filtering merupakan pendekatan sistem rekomendasi yang merekomendasikan item (dalam hal ini film) kepada pengguna berdasarkan kemiripan konten (genre, deskripsi, dan informasi metadata lainnya) dengan film yang pernah disukai atau ditonton oleh pengguna tersebut. Berikut adalah penjelasan **per bagian kode** dari implementasi sistem **Content-Based Filtering (CBF)**:
+
     - **cosine_sim**
       -  Fungsi `cosine_similarity()` menghitung kemiripan antar baris dalam matriks `tfidf_matrix` berdasarkan sudut kosinusnya
       -  Karena `tfidf_matrix` adalah representasi TF-IDF untuk genre tiap film, hasil `cosine_sim` adalah matriks persegi (square matrix) yang menunjukkan tingkat kemiripan genre antar setiap pasangan film.
@@ -190,6 +193,24 @@ Penjelasaanya:
       - `closest` berisi nama film-film dengan kemiripan tertinggi tersebut.
       - Film yang sama dengan `nama_movie` dihapus agar tidak merekomendasikan film itu sendiri.
       - Hasil dikembalikan sebagai DataFrame berisi judul dan genre dari film-film rekomendasi
+
+**HASIL**
+Mencari rekomendasi film dari avatar, berikut detail dari Avatar
+
+| id    | movie_name | genre                                             |
+|-------|------------|---------------------------------------------------|
+| 19995 | Avatar     | Action Adventure Fantasy Science Fiction          |
+
+Berikut 5 film teratas yang direkomendasikan dengan genre yang mirip dengan film Avatar
+
+| movie_name                              | genre                                             |
+|-----------------------------------------|---------------------------------------------------|
+| Man of Steel                            | Action Adventure Fantasy Science Fiction          |
+| The Wolverine                           | Action Science Fiction Adventure Fantasy          |
+| Superman Returns                        | Adventure Fantasy Action Science Fiction          |
+| Jupiter Ascending                       | Science Fiction Fantasy Action Adventure          |
+| Beastmaster 2: Through the Portal of Time | Action Adventure Fantasy Science Fiction        |
+
 
 **Kelebihan Content-Based Filtering (CBF):**
 
