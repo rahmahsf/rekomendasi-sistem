@@ -18,6 +18,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -95,10 +96,7 @@ print(f'Jumlah missing value setelah dihapus: {movie_new.isnull().sum()}')
 
 movie_new.shape
 
-"""jumlah data dan kolom setelah dihapus adalah 4775 baris dan 3 kolom
-
-# Content-Based Filtering (CBF)
-"""
+"""jumlah data dan kolom setelah dihapus adalah 4775 baris dan 3 kolom"""
 
 # Inisialisasi TfidfVectorizer
 tf = TfidfVectorizer()
@@ -124,7 +122,10 @@ pd.DataFrame(
     index=movie_new.movie_name
 ).sample(22, axis=1).sample(10, axis=0)
 
-"""untuk melihat sebagian kecil dari matriks TF-IDF dengan lebih mudah dan cepat. Ini berguna sebagai inspeksi data sebelum melanjutkan ke tahap perhitungan kesamaan (similarity)."""
+"""untuk melihat sebagian kecil dari matriks TF-IDF dengan lebih mudah dan cepat. Ini berguna sebagai inspeksi data sebelum melanjutkan ke tahap perhitungan kesamaan (similarity).
+
+# Content-Based Filtering (CBF)
+"""
 
 cosine_sim = cosine_similarity(tfidf_matrix)
 cosine_sim
@@ -159,10 +160,11 @@ def movie_recommendations(nama_movie, similarity_data=cosine_sim_df, items=movie
 
 movie_new[movie_new.movie_name.eq('Avatar')]
 
-"""check genre film mau yang diuji
+"""check genre film mau yang diuji"""
 
-# Evaluasi
-"""
+movie_recommendations('Avatar')
+
+"""# Evaluasi"""
 
 def hitung_presisi(rekomendasi_df, movie_input, items=movie_new[['movie_name', 'genre']]):
     # Ambil genre film yang menjadi input (misal 'Avatar')
